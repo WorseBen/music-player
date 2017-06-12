@@ -22,7 +22,6 @@
         return this.singer.name
       },
       bgImage() {
-        console.log(this.singer)
         return this.singer.avatar
       },
       ...mapGetters([
