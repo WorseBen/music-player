@@ -49,11 +49,33 @@
         if (!this.slider) {
           return
         }
-        this._setSliderWidth(true)
-        this.slider.refresh()
+        clearTimeout(this.resizeTimer)
+        this.resizeTimer = setTimeout(() => {
+          if (this.slider.isInTransition) {
+            this._onScrollEnd()
+          } else {
+            if (this.autoPlay) {
+              clearTimeout(this.timer)
+              this._play()
+            }
+          }
+          this.refresh()
+        }, 60)
       })
     },
+    activated() {
+      if (this.autoPlay) {
+        this._play()
+      }
+    },
+    deactivated() {
+      clearTimeout(this.timer)
+    },
     methods: {
+      refresh() {
+        this._setSliderWidth(true)
+        this.slider.refresh()
+      },
       _setSliderWidth(isResize) {
         this.children = this.$refs.sliderGroup.children
 
@@ -79,6 +101,7 @@
         this.slider = new BScroll(this.$refs.slider, {
           scrollX: true,
           scrollY: false,
+          eventPassthrough: 'vertical',
           momentum: false,
           snap: true,
           snapLoop: this.loop,
@@ -86,18 +109,24 @@
           snapSpeed: 400
         })
 
-        this.slider.on('scrollEnd', () => {
-          let pageIndex = this.slider.getCurrentPage().pageX
-          if (this.loop) {
-            pageIndex -= 1
-          }
-          this.currentPageIndex = pageIndex
+        this.slider.on('scrollEnd', this._onScrollEnd)
 
+        this.slider.on('beforeScrollStart', () => {
           if (this.autoPlay) {
             clearTimeout(this.timer)
-            this._play()
           }
         })
+      },
+      _onScrollEnd() {
+        let pageIndex = this.slider.getCurrentPage().pageX
+        if (this.loop) {
+          pageIndex -= 1
+        }
+        this.currentPageIndex = pageIndex
+
+        if (this.autoPlay) {
+          this._play()
+        }
       },
       _play() {
         let pageIndex = this.currentPageIndex + 1
@@ -108,9 +137,6 @@
           this.slider.goToPage(pageIndex, 0, 400)
         }, this.interval)
       }
-    },
-    destroyed() {
-      clearTimeout(this.timer)
     }
   }
 </script>
