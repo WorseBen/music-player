@@ -18,7 +18,7 @@ export function getRecommend() {
 }
 
 export function getDiscList() {
-  const url = '/api/getDiscList'
+  const url = 'https://ftbx.majy999.com/api/Qmusic/getDiscList'
 
   const data = Object.assign({}, commonParams, {
     platform: 'yqq',
