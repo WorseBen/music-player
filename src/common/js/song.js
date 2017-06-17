@@ -24,6 +24,8 @@ export default class Song {
 
     return new Promise((resolve, reject) => {
       getLyric(this.mid).then((res) => {
+        console.log(res)
+
         if (res.retcode === ERR_OK) {
           this.lyric = Base64.decode(res.lyric)
           resolve(this.lyric)
@@ -48,7 +50,7 @@ export function createSong (musicData) {
   })
 }
 
-function filterSinger (singer) {
+export function filterSinger (singer) {
   let ret = []
   if (!singer) {
     return ''

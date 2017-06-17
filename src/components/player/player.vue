@@ -408,6 +408,7 @@
         }
         if (this.currentLyric) {
           this.currentLyric.stop()
+          this.currentLyric = null
         }
         setTimeout(() => {
           this.$refs.audio.play()
@@ -419,6 +420,13 @@
         this.$nextTick(() => {
           newPlaying ? audio.play() : audio.pause()
         })
+      },
+      fullScreen(newVal) {
+        if (newVal) {
+          setTimeout(() => {
+            this.$refs.lyricList.refresh()
+          })
+        }
       }
     },
     components: {
